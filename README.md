@@ -55,54 +55,7 @@ GoalForge relies on a robust, highly scalable serverless architecture entirely p
 ### System Flow
 The following diagram illustrates the secure data flow between the client, the serverless backend, and the Google Cloud ecosystem:
 
-```mermaid
-graph TD
-    %% Define Styles
-    classDef client fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#fff
-    classDef cloud fill:#0f172a,stroke:#4285f4,stroke-width:2px,color:#fff
-    classDef database fill:#0f172a,stroke:#fbbc05,stroke-width:2px,color:#fff
-    classDef ai fill:#0f172a,stroke:#ea4335,stroke-width:2px,color:#fff
-
-    %% Nodes
-    Client[📱 Client PWA<br>HTML / JS / Tailwind]:::client
-    Auth[🔐 Firebase Authentication<br>Google Sign-In]:::database
-    CloudRun[☁️ Google Cloud Run<br>Python Flask Backend]:::cloud
-    Firestore[🗄️ Cloud Firestore<br>User-Isolated NoSQL]:::database
-    Gemini[🧠 Google Gemini API<br>AI Coaching Engine]:::ai
-
-    %% Connections
-    Client -- "1. Logs in" --> Auth
-    Auth -- "2. Returns JWT Token" --> Client
-    Client -- "3. HTTPS API Request + JWT" --> CloudRun
-    CloudRun -- "4. Verifies Token" --> Auth
-    CloudRun -- "5. Fetches Context" --> Firestore
-    CloudRun -- "6. Sends Prompt" --> Gemini
-    Gemini -- "7. Returns AI Response" --> CloudRun
-    CloudRun -- "8. Saves Data" --> Firestore
-    CloudRun -- "9. Returns JSON" --> Client
-
-    Technology Breakdown
-Component	Technology	Description
-Frontend	HTML/Vanilla JS, Tailwind CSS	Lightweight, cache-optimized PWA avoiding heavy frameworks.
-Backend	Python (Flask / Gunicorn)	Containerized REST API handling all core business and AI logic.
-Compute	Google Cloud Run	Fully managed, serverless execution environment ensuring zero-downtime scaling.
-Database	Cloud Firestore	Real-time NoSQL database. All user data is isolated via users/{uid}/... architecture.
-Identity	Firebase Authentication	Secure Google Sign-In with robust server-side token verification via the Firebase Admin SDK.
-🧠 Gemini AI Integration Details
-GoalForge leverages the Gemini 1.5 Flash model for its extreme speed and low latency.
-
-Advanced LLM Engineering: To ensure 100% uptime and gracefully bypass strict free-tier rate limits, the backend implements a custom Multi-Model Fallback Chain. If the primary model hits a quota limit, the LLMClient seamlessly cascades the request (gemini-3.6-flash ➡️ 3.7-flash ➡️ 3.5-flash), guaranteeing uninterrupted AI service for the user.
-
-🛠 Getting Started
-To run GoalForge locally for development or testing:
-
-Prerequisites
-Python 3.10+
-Google Cloud CLI (gcloud) installed and authenticated
-1. Installation
-Clone the repo, set up a virtual environment, and install dependencies:
-
-bash
+<img width="955" height="510" alt="image" src="https://github.com/user-attachments/assets/fcf1c93e-07b2-4215-b773-a4badb1a80f3" />
 
 
 git clone https://github.com/Naveen230497/GoalForge.git
