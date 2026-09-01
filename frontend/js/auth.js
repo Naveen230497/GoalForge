@@ -1,7 +1,7 @@
 // Firebase Authentication
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBMl2wYuPdNxk7PAsjtZIHsOQnXOlR0jTg",
+    apiKey: "your API key ",
     authDomain: "goalforge-app-61523.firebaseapp.com",
     projectId: "goalforge-app-61523",
     storageBucket: "goalforge-app-61523.firebasestorage.app",
