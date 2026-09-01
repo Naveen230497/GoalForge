@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoalForge</title>
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.8/purify.min.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    
+    <!-- All Languages Translation Engine -->
+    <style>
+        #google_translate_element { 
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0,0,0,0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
+        .goog-te-banner-frame { display: none !important; }
+        .skiptranslate > iframe { display: none !important; }
+        body { top: 0px !important; position: static !important; }
+        .goog-tooltip { display: none !important; }
+        .goog-tooltip:hover { display: none !important; }
+        .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+        font { background: transparent !important; box-shadow: none !important; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    </style>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element');
+        }
+        function changeLanguage(langCode) {
+            if (langCode === '' || langCode === 'en') {
+                // Wipe Google Translate cookies to forcibly restore original language
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + location.hostname + "; path=/;";
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=." + location.hostname + "; path=/;";
+                window.location.reload();
+                return;
+            }
+            var select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.value = langCode;
+                select.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            }
+        }window.langMap = {};
+        const langNames = {
+            'af': 'Afrikaans', 'sq': 'Albanian', 'am': 'Amharic', 'ar': 'Arabic', 'hy': 'Armenian', 'az': 'Azerbaijani', 'eu': 'Basque', 'be': 'Belarusian', 'bn': 'Bengali', 'bs': 'Bosnian', 'bg': 'Bulgarian', 'ca': 'Catalan', 'ceb': 'Cebuano', 'ny': 'Chichewa', 'zh-CN': 'Chinese (Simplified)', 'zh-TW': 'Chinese (Traditional)', 'co': 'Corsican', 'hr': 'Croatian', 'cs': 'Czech', 'da': 'Danish', 'nl': 'Dutch', 'en': 'English', 'eo': 'Esperanto', 'et': 'Estonian', 'tl': 'Filipino', 'fi': 'Finnish', 'fr': 'French', 'fy': 'Frisian', 'gl': 'Galician', 'ka': 'Georgian', 'de': 'German', 'el': 'Greek', 'gu': 'Gujarati', 'ht': 'Haitian Creole', 'ha': 'Hausa', 'haw': 'Hawaiian', 'iw': 'Hebrew', 'hi': 'Hindi', 'hmn': 'Hmong', 'hu': 'Hungarian', 'is': 'Icelandic', 'ig': 'Igbo', 'id': 'Indonesian', 'ga': 'Irish', 'it': 'Italian', 'ja': 'Japanese', 'jw': 'Javanese', 'kn': 'Kannada', 'kk': 'Kazakh', 'km': 'Khmer', 'rw': 'Kinyarwanda', 'ko': 'Korean', 'ku': 'Kurdish (Kurmanji)', 'ky': 'Kyrgyz', 'lo': 'Lao', 'la': 'Latin', 'lv': 'Latvian', 'lt': 'Lithuanian', 'lb': 'Luxembourgish', 'mk': 'Macedonian', 'mg': 'Malagasy', 'ms': 'Malay', 'ml': 'Malayalam', 'mt': 'Maltese', 'mi': 'Maori', 'mr': 'Marathi', 'mn': 'Mongolian', 'my': 'Myanmar (Burmese)', 'ne': 'Nepali', 'no': 'Norwegian', 'or': 'Odia (Oriya)', 'ps': 'Pashto', 'fa': 'Persian', 'pl': 'Polish', 'pt': 'Portuguese', 'pa': 'Punjabi', 'ro': 'Romanian', 'ru': 'Russian', 'sm': 'Samoan', 'gd': 'Scots Gaelic', 'sr': 'Serbian', 'st': 'Sesotho', 'sn': 'Shona', 'sd': 'Sindhi', 'si': 'Sinhala', 'sk': 'Slovak', 'sl': 'Slovenian', 'so': 'Somali', 'es': 'Spanish', 'su': 'Sundanese', 'sw': 'Swahili', 'sv': 'Swedish', 'tg': 'Tajik', 'ta': 'Tamil', 'tt': 'Tatar', 'te': 'Telugu', 'th': 'Thai', 'tr': 'Turkish', 'tk': 'Turkmen', 'uk': 'Ukrainian', 'ur': 'Urdu', 'ug': 'Uyghur', 'uz': 'Uzbek', 'vi': 'Vietnamese', 'cy': 'Welsh', 'xh': 'Xhosa', 'yi': 'Yiddish', 'yo': 'Yoruba', 'zu': 'Zulu'
+        };
+        window.allLangs = [];
+        function populateCustomLanguages() {
+            var checkExist = setInterval(function() {
+               var googSelect = document.querySelector('.goog-te-combo');
+               if (googSelect && googSelect.options.length > 0) {
+                  clearInterval(checkExist);
+                  
+                  var langListEl = document.getElementById('langList');
+                  if(!langListEl) return;
+                  langListEl.innerHTML = '';
+                  
+                  var currentLang = "🌐 Select Language";
+                  document.getElementById('langDropdownText').innerText = currentLang;
+                  
+                  // Forcibly add English (Base Page Language)
+                  var enLi = document.createElement('li');
+                  enLi.className = 'px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white cursor-pointer rounded-lg transition-colors lang-option';
+                  enLi.innerText = 'English';
+                  enLi.dataset.val = '';
+                  enLi.onclick = function() {
+                      document.getElementById('langDropdownText').innerText = this.innerText;
+                      document.getElementById('langDropdownMenu').classList.add('hidden');
+                      document.getElementById('langSearchInput').value = '';
+                      changeLanguage(this.dataset.val);
+                  };
+                  langListEl.appendChild(enLi);
+                  window.allLangs.push({val: '', englishName: 'english', el: enLi});
+                  
+                  for (var i = 0; i < googSelect.options.length; i++) {
+                      var val = googSelect.options[i].value;
+                      var text = googSelect.options[i].text;
+                      if (val !== "") {
+                          var englishName = langNames[val] || text;
+                          var li = document.createElement('li');
+                          li.className = 'px-3 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white cursor-pointer rounded-lg transition-colors lang-option';
+                          li.innerText = englishName;
+                          li.dataset.val = val;
+                          li.onclick = function() {
+                              document.getElementById('langDropdownText').innerText = this.innerText;
+                              document.getElementById('langDropdownMenu').classList.add('hidden');
+                              changeLanguage(this.dataset.val);
+                          };
+                          langListEl.appendChild(li);
+                          window.allLangs.push({val: val, englishName: englishName.toLowerCase(), el: li});
+                      }
+                  }
+                  
+                  // Setup search filter
+                  document.getElementById('langSearchInput').addEventListener('input', function(e) {
+                      var query = e.target.value.toLowerCase();
+                      window.allLangs.forEach(function(item) {
+                          if (item.englishName.includes(query) || item.val.toLowerCase().includes(query)) {
+                              item.el.style.display = 'block';
+                          } else {
+                              item.el.style.display = 'none';
+                          }
+                      });
+                  });
+                  
+                  // Setup Enter key to select top language
+                  document.getElementById('langSearchInput').addEventListener('keydown', function(e) {
+                      if (e.key === 'Enter') {
+                          e.preventDefault();
+                          var visibleOptions = Array.from(document.querySelectorAll('.lang-option')).filter(function(opt) {
+                              return opt.style.display !== 'none';
+                          });
+                          if (visibleOptions.length > 0) {
+                              visibleOptions[0].click();
+                              this.value = ''; // clear search box
+                          }
+                      }
+                  });
+                  
+                  // Setup Dropdown Toggle
+                  document.getElementById('langDropdownButton').addEventListener('click', function(e) {
+                      e.stopPropagation();
+                      var menu = document.getElementById('langDropdownMenu');
+                      menu.classList.toggle('hidden');
+                      if(!menu.classList.contains('hidden')) {
+                          document.getElementById('langSearchInput').focus();
+                      }
+                  });
+                  
+                  // Click outside to close
+                  document.addEventListener('click', function(e) {
+                      if (!document.getElementById('langDropdownContainer').contains(e.target)) {
+                          document.getElementById('langDropdownMenu').classList.add('hidden');
+                      }
+                  });
+               }
+            }, 500);
+        }
+        document.addEventListener("DOMContentLoaded", populateCustomLanguages);
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Ambient Background Glow -->
+    <div class="fixed top-[5%] left-[25%] w-[600px] h-[600px] bg-blue-500/30 rounded-full blur-[150px] pointer-events-none z-0"></div>
+    <div class="fixed top-[20%] right-[5%] w-[500px] h-[500px] bg-purple-500/25 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] left-[10%] w-[500px] h-[500px] bg-emerald-500/15 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3"></div>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar bg-[#13161f] border-r border-white/5 flex flex-col h-full fixed w-[240px] z-20">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-white flex items-center gap-3 tracking-tight">
+                    <span class="text-2xl drop-shadow-[0_0_10px_rgba(255,100,0,0.5)]">🔥</span> GoalForge
+                </h1>
+            </div>
+            
+            <nav class="flex-1 px-4 mt-6 space-y-2">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-white/10 text-white font-medium border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    Dashboard
+                </a>
+                <a href="#goalsList" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors font-medium">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Goals
+                </a>
+                <a href="#checkinBanner" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors font-medium">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    Check-ins
+                </a>
+                <a href="#" onclick="document.getElementById('settingsModal').classList.remove('hidden')" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors font-medium">
+                    <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Settings
+                </a>
+            </nav>
+
+            <div class="p-6 mt-auto border-t border-white/5">
+                <button onclick="signOut()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-rose-500/10 text-rose-400 font-medium border border-rose-500/20 hover:bg-rose-500/20 transition">
+                    Sign out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="col-start-2 p-6 md:p-10 w-full max-w-6xl mx-auto relative z-10">
+            
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-white tracking-tight hidden md:block">Dashboard</h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="google_translate_element"></div>
+                    
+                    <div class="relative inline-block text-left notranslate" id="langDropdownContainer">
+                        <button type="button" id="langDropdownButton" class="bg-black/30 border border-white/10 rounded-full px-4 py-1.5 text-sm text-gray-300 outline-none w-48 cursor-pointer hover:bg-white/5 focus:ring-1 focus:ring-purple-500 transition-all flex justify-between items-center">
+                            <span id="langDropdownText">⏳ Loading Languages...</span>
+                            <svg class="w-4 h-4 ml-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="langDropdownMenu" class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-[#1a1f2e] border border-white/10 shadow-2xl z-50 overflow-hidden backdrop-blur-xl">
+                            <div class="p-2 border-b border-white/10 bg-black/20">
+                                <input type="text" id="langSearchInput" placeholder="Search language..." class="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-purple-500 placeholder-gray-500">
+                            </div>
+                            <ul id="langList" class="max-h-60 overflow-y-auto p-1 custom-scrollbar">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full pl-4 pr-1 py-1 cursor-pointer hover:bg-white/10 transition">
+                    <div class="text-sm text-right mr-2">
+                        <span class="block text-white font-medium leading-tight" id="userEmailDisplay">Loading...</span>
+                        <div class="flex items-center gap-2 mt-1 justify-end">
+                            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider" id="userLevelBadge">Lvl 1</span>
+                            <div class="w-16 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                                <div id="userXpBar" class="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-inner">
+                        <span id="userInitial">?</span>
+                    </div>
+                </div>
+                </div>
+            </header>
+
+            <!-- AI Insights Banner -->
+            <div id="insightsBanner" class="hidden glass-panel rounded-2xl p-5 mb-8 border-l-4 border-l-purple-500 flex items-center gap-4 bg-gradient-to-r from-purple-900/20 to-blue-900/10 shadow-lg animate-fade-in-up">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-0.5 flex items-center gap-2">AI Coach Insight <span class="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">New</span></h4>
+                    <p id="insightsText" class="text-gray-300 text-sm leading-relaxed">Analyzing your progress...</p>
+                </div>
+            </div>
+
+            <!-- Check-In Banner -->
+            <div id="checkinBanner" class="hidden glass-panel rounded-xl p-5 mb-8 border-l-4 border-l-amber-500 shadow-lg animate-fade-in-down">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="bg-amber-500/20 p-2 rounded-lg text-amber-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="font-bold text-white text-lg">Daily Check-ins</h3>
+                </div>
+                <div id="checkinList" class="space-y-3">
+                    <!-- Checkins injected here -->
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div id="statsBar" class="hidden grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                <div class="glass-panel p-6 rounded-xl flex flex-col justify-center">
+                    <div class="text-sm font-medium text-gray-400 mb-2">Commitments</div>
+                    <div id="statTotal" class="text-3xl font-bold text-white">0</div>
+                </div>
+                <div class="glass-panel p-6 rounded-xl flex flex-col justify-center border-t-2 border-t-emerald-500/50">
+                    <div class="text-sm font-medium text-gray-400 mb-2">Completed</div>
+                    <div id="statCompleted" class="text-3xl font-bold text-white">0</div>
+                </div>
+                <div class="glass-panel p-6 rounded-xl flex flex-col justify-center">
+                    <div class="text-sm font-medium text-gray-400 mb-2">Missed</div>
+                    <div id="statMissed" class="text-3xl font-bold text-gray-300">0</div>
+                </div>
+                <div class="glass-panel p-6 rounded-xl flex flex-col justify-center border-t-2 border-t-blue-500/50">
+                    <div class="text-sm font-medium text-gray-400 mb-2">Follow-through %</div>
+                    <div id="statRate" class="text-3xl font-bold text-white">0%</div>
+                </div>
+            </div>
+
+            <!-- New Goal Input -->
+            <div class="mb-12">
+                <form id="newGoalForm" onsubmit="handleNewGoal(event)">
+                    <div class="relative shadow-2xl pulse-glow max-w-4xl mx-auto rounded-full bg-gradient-to-r from-blue-500 to-purple-600 p-[1px]">
+                        <div class="flex items-center p-1.5 bg-[#1a1f2e] rounded-full">
+                            <input id="goalInput" type="text"
+                                   placeholder="What do you want to achieve?"
+                                   class="flex-1 bg-transparent border-none px-6 py-3 text-lg focus:ring-0 shadow-none focus:shadow-none placeholder-gray-500 text-white outline-none"
+                                   maxlength="500" required>
+                            <button type="button" id="magicBtn" onclick="enhanceGoalInput()" class="p-3 text-gray-400 hover:text-purple-400 transition-colors rounded-full hover:bg-white/5" title="AI Magic Enhance">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                            </button>
+                            <button type="button" id="micBtn" onclick="toggleVoiceInput()" class="p-3 text-gray-400 hover:text-blue-400 transition-colors rounded-full hover:bg-white/5" title="Use Voice Typing">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                            </button>
+                            <button type="submit" id="goalSubmitBtn"
+                                    class="bg-white text-gray-900 px-8 py-3 rounded-full font-bold hover:bg-gray-200 transition shadow-sm whitespace-nowrap min-w-[120px]">
+                                Add Goal
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Chat Modal Overlay -->
+            <div id="chatModalOverlay" class="hidden fixed inset-0 bg-[#0f1117]/80 backdrop-blur-md z-50 flex items-center justify-center p-4 md:p-6 animate-fade-in-up">
+                <div id="chatPanel" class="bg-[#1a1f2e] border border-white/10 rounded-2xl w-full max-w-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+                    <div class="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-[#13161f]">
+                        <h2 id="chatGoalTitle" class="font-bold text-lg text-white truncate pr-4"></h2>
+                        <button onclick="closeChat()" class="text-gray-400 hover:text-white p-2 transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    
+                    <div id="chatMessages" class="px-6 py-6 overflow-y-auto space-y-6 flex-1 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiLz4KPC9zdmc+')]">
+                    </div>
+
+                    <div class="p-5 border-t border-white/5 bg-[#13161f]">
+                        <form onsubmit="handleSendMessage(event)" class="flex gap-3">
+                            <input id="chatInput" type="text"
+                                   placeholder="Reply to the AI..."
+                                   class="flex-1 bg-black/20 border border-white/10 rounded-xl px-5 py-3 focus:outline-none focus:border-blue-500 text-white placeholder-gray-500"
+                                   maxlength="2000" required>
+                            <button type="submit" id="chatSendBtn"
+                                    class="btn-primary text-white px-6 py-3 rounded-xl font-medium min-w-[100px]">
+                                Send
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="saveStepsPanel" class="hidden p-5 border-t border-purple-500/30 bg-purple-900/20 flex justify-between items-center">
+                        <p class="text-sm font-medium text-purple-300">
+                            AI suggested actionable steps. Want to track them?
+                        </p>
+                        <button onclick="handleSaveSteps()"
+                                class="btn-ai text-white px-5 py-2 rounded-lg font-medium shadow-lg shadow-purple-500/20">
+                            Save to Goal
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white tracking-wide uppercase text-sm">Active Goals</h2>
+            </div>
+
+            <!-- Goals Grid -->
+            <div id="goalsList" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-24 glass-panel rounded-2xl border-dashed border-gray-700">
+                <div class="text-5xl mb-4 opacity-50 grayscale">🎯</div>
+                <h3 class="text-xl font-bold text-white mb-2">No goals yet</h3>
+                <p class="text-gray-400">Add a goal above to start your journey.</p>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-24">
+                <div class="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                <p class="text-gray-400 mt-4 font-medium">Syncing...</p>
+            </div>
+            <!-- Settings Modal -->
+            <div id="settingsModal" class="hidden fixed inset-0 bg-[#0f1117]/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                <div class="bg-[#1a1f2e] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl flex flex-col">
+                    <div class="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-[#13161f]">
+                        <h2 class="font-bold text-lg text-white">Notification Settings</h2>
+                        <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="text-gray-400 hover:text-white transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <!-- Browser Push -->
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-white font-medium">Browser Push Notifications</h3>
+                                <p class="text-gray-400 text-sm">Get native desktop alerts when tasks are due.</p>
+                            </div>
+                            <button id="toggleBrowserPush" onclick="enableBrowserPush()" class="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-4 py-2 rounded-lg font-medium hover:bg-blue-500/30 transition">
+                                Enable
+                            </button>
+                        </div>
+                        
+                        <!-- Email Reminders -->
+                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                            <div>
+                                <h3 class="text-white font-medium">Email Reminders</h3>
+                                <p class="text-gray-400 text-sm">Receive a daily digest of pending steps.</p>
+                            </div>
+                            <button id="testEmailBtn" onclick="testEmailNotification()" class="bg-purple-500/20 text-purple-400 border border-purple-500/30 px-4 py-2 rounded-lg font-medium hover:bg-purple-500/30 transition">
+                                Test Email
+                            </button>
+                        </div>
+
+                        <!-- Mobile Push -->
+                        <div class="flex items-center justify-between pt-4 border-t border-white/5 opacity-50">
+                            <div>
+                                <h3 class="text-white font-medium">Mobile Push (FCM)</h3>
+                                <p class="text-gray-400 text-sm">Download the iOS/Android app to enable.</p>
+                            </div>
+                            <button disabled class="bg-gray-800 text-gray-500 border border-gray-700 px-4 py-2 rounded-lg font-medium cursor-not-allowed">
+                                App Only
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+    <!-- App Scripts -->
+    <script src="/js/utils.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/checkin.js"></script>
+    <script src="/js/chat.js"></script>
+    <script src="/js/goals.js"></script>
+
+    <script>
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = "/";
+                return;
+            }
+            document.getElementById("userEmailDisplay").textContent = user.displayName || user.email;
+            if (user.displayName) {
+                document.getElementById("userInitial").textContent = user.displayName.charAt(0).toUpperCase();
+            } else if (user.email) {
+                document.getElementById("userInitial").textContent = user.email.charAt(0).toUpperCase();
+            }
+            
+            try {
+                await Promise.all([
+                    loadPendingCheckins(),
+                    loadCheckinStats(),
+                    loadGoals()
+                ]);
+            } catch (err) {
+                console.error("Dashboard load error", err);
+                showToast("Error loading dashboard", "error");
+            }
+        });
+    </script>
+</body>
+</html>

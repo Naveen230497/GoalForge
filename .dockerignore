@@ -1,0 +1,7 @@
+secret.txt
+secret_out.bin
+.git
+.gitignore
+__pycache__
+*.pyc
+*.md

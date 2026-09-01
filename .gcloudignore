@@ -1,0 +1,10 @@
+.gcloudignore
+.git
+.gitignore
+secret.txt
+secret_out.bin
+__pycache__
+*.pyc
+*.md
+
+venv/
