@@ -55,7 +55,7 @@ GoalForge relies on a robust, highly scalable serverless architecture entirely p
 ### System Flow
 The following diagram illustrates the secure data flow between the client, the serverless backend, and the Google Cloud ecosystem:
 
-<img width="2400" height="1213" alt="architecture_high_res" src="https://github.com/user-attachments/assets/1a282bc8-31e5-40b6-bf99-180528b4a62c" />
+<img width="3600" height="2997" alt="professional_architecture_diagram" src="https://github.com/user-attachments/assets/2831e55c-295b-4cc7-82be-9666a8dba55f" />
 
 
 
