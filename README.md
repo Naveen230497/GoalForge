@@ -20,8 +20,7 @@ Built specifically for the **Gen AI Academy APAC Ideathon**, this application ab
 
 ## 🏗️ Architecture & Google Cloud Infrastructure
 
-<img width="3600" height="2997" alt="professional_architecture_diagram" src="https://github.com/user-attachments/assets/49d9f0d6-35a2-48e3-af91-e551305b0a91" />
-
+<img width="1600" height="711" alt="professional_architecture" src="https://github.com/user-attachments/assets/24f8a4f6-08e5-43d0-9b0f-ffc5575b4ef6" />
 
 GoalForge relies on a robust, highly scalable serverless architecture:
 
