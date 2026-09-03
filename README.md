@@ -20,6 +20,9 @@ Built specifically for the **Gen AI Academy APAC Ideathon**, this application ab
 
 ## 🏗️ Architecture & Google Cloud Infrastructure
 
+<img width="3600" height="2997" alt="professional_architecture_diagram" src="https://github.com/user-attachments/assets/49d9f0d6-35a2-48e3-af91-e551305b0a91" />
+
+
 GoalForge relies on a robust, highly scalable serverless architecture:
 
 *   **Frontend:** Vanilla HTML/JS, Tailwind CSS (CDN). Fully functional Progressive Web App (PWA) with Service Worker caching for instant load times.
