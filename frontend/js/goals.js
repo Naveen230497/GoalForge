@@ -59,7 +59,9 @@ function renderGoalCard(goal, steps) {
         `).join("")
         : '<p class="text-gray-500 text-sm italic mt-2">No steps yet. Open chat to break this down.</p>';
 
-    const bgPrompt = "cinematic aesthetic photo representing goal: " + goal.title;
+    // Truncate the title to max 50 characters for the image generation prompt to prevent API timeouts or URI length errors
+    const shortTitle = goal.title.length > 50 ? goal.title.substring(0, 50) + "..." : goal.title;
+    const bgPrompt = "cinematic aesthetic photo representing goal: " + shortTitle;
     const bgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(bgPrompt)}?width=600&height=400&nologo=true`;
 
     return `

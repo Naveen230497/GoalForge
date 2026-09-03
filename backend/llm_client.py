@@ -28,9 +28,9 @@ class LLMClient:
         # We hit PerModel rate limits on the free tier, so we configure a chain of valid fallback models
         self.models = [
             genai.GenerativeModel(model_name="gemini-3.6-flash", system_instruction=SYSTEM_PROMPT),
-            genai.GenerativeModel(model_name="gemini-3.7-flash", system_instruction=SYSTEM_PROMPT),
-            genai.GenerativeModel(model_name="gemini-3.5-flash", system_instruction=SYSTEM_PROMPT),
-            genai.GenerativeModel(model_name="gemini-2.5-flash", system_instruction=SYSTEM_PROMPT)
+            genai.GenerativeModel(model_name="gemini-3.1-flash-lite", system_instruction=SYSTEM_PROMPT),
+            genai.GenerativeModel(model_name="gemini-flash-latest", system_instruction=SYSTEM_PROMPT),
+            genai.GenerativeModel(model_name="gemini-3.7-flash", system_instruction=SYSTEM_PROMPT)
         ]
 
     def _attempt_chat(self, model, history, message):
@@ -69,9 +69,9 @@ class LLMClient:
     def generate(self, prompt: str) -> str:
         model_names = [
             "gemini-3.6-flash",
-            "gemini-3.7-flash",
-            "gemini-3.5-flash",
-            "gemini-2.5-flash"
+            "gemini-3.1-flash-lite",
+            "gemini-flash-latest",
+            "gemini-3.7-flash"
         ]
         last_error = None
         for name in model_names:
